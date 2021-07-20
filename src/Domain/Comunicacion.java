@@ -14,9 +14,6 @@ public class Comunicacion {
     public Comunicacion() {
     }
 
-    
-    
-    
     public boolean insert(Libro libro) throws SocketException, UnknownHostException, IOException {
 
         DatagramSocket socketUDP;
@@ -99,8 +96,8 @@ public class Comunicacion {
         for (int i = 0; i < libros.size(); i++) {
 
             if (libros.get(i).getMetadata().getTitulo().equals(titulo)) {
-                
-                contenido=libros.get(i).getMetadata().getIsbn()+"-"+ libros.get(i).getContenido().getContenido();
+
+                contenido = libros.get(i).getMetadata().getIsbn() + "-" + libros.get(i).getContenido().getContenido();
                 break;
 
             }
@@ -110,4 +107,28 @@ public class Comunicacion {
         return contenido;
     }
 
+    public ArrayList<Libro> mostrarLibroMetadata(String palabraBuscar) throws UnknownHostException, IOException {
+
+        ArrayList<Libro> libros = getListaLibros();
+        ArrayList<Libro> aux= new ArrayList<>();
+        
+        for (int i = 0; i < libros.size(); i++) {
+
+            if (libros.get(i).getMetadata().getAutor().contains(palabraBuscar)
+                    || libros.get(i).getMetadata().getEditorial().contains(palabraBuscar)
+                    || libros.get(i).getMetadata().getGenero().contains(palabraBuscar)
+                    || libros.get(i).getMetadata().getTitulo().contains(palabraBuscar)
+                    || String.valueOf(libros.get(i).getMetadata().getIsbn()).contains(palabraBuscar)
+                    || libros.get(i).getMetadata().getPaginas().contains(palabraBuscar)) {
+                
+                
+                
+                
+                aux.add(libros.get(i));
+
+            }
+        }
+
+        return aux;
+    }
 }

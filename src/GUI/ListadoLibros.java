@@ -64,13 +64,12 @@ public class ListadoLibros extends JFrame implements ActionListener {
             String itemSeleccionado = String.valueOf(this.combo.getSelectedItem());
 
             Comunicacion comunicacion = new Comunicacion();
-            
-            
+
             try {
-                
-                String contenido= comunicacion.mostrarContenidoLibroSeleccionado(itemSeleccionado);
+
+                String contenido = comunicacion.mostrarContenidoLibroSeleccionado(itemSeleccionado);
                 String[] parts = contenido.split("-");
-                MostrarLibro mostrar = new MostrarLibro(itemSeleccionado,parts[0],parts[1]);
+                MostrarLibro mostrar = new MostrarLibro(itemSeleccionado, parts[0], parts[1]);
                 mostrar.setVisible(true);
 
             } catch (IOException ex) {
@@ -94,12 +93,19 @@ public class ListadoLibros extends JFrame implements ActionListener {
                 combo.addItem(libros.get(i).getMetadata().getTitulo());
             }
 
-            //busca con el parametro las opciones de todos
+            
         }
 
         if (opcion == 2) {
 
-            //llena con el parametro las opciones especificas
+            Comunicacion comunicacion = new Comunicacion();
+            ArrayList<Libro> libros = comunicacion.mostrarLibroMetadata(parametro);
+
+            for (int i = 0; i < libros.size(); i++) {
+
+                combo.addItem(libros.get(i).getMetadata().getTitulo());
+            }
+
         }
 
     }
