@@ -2,27 +2,33 @@
 package Domain;
 
 import java.io.File;
+import java.io.Serializable;
 
 
-public class Libro {
+public class Libro implements Serializable{
     
-    private int isbn;
+  
     private Metadata metadata;
-    private File file;
+    private Contenido contenido;
 
-    public Libro(int isbn, Metadata metadata, File file) {
-        this.isbn = isbn;
+    public Libro(Metadata metadata, Contenido contenido) {
         this.metadata = metadata;
-        this.file = file;
+        this.contenido = contenido;
+    }
+    
+    
+
+    public Contenido getContenido() {
+        return contenido;
     }
 
-    public int getIsbn() {
-        return isbn;
+    public void setContenido(Contenido contenido) {
+        this.contenido = contenido;
     }
 
-    public void setIsbn(int isbn) {
-        this.isbn = isbn;
-    }
+    
+
+  
 
     public Metadata getMetadata() {
         return metadata;
@@ -32,13 +38,7 @@ public class Libro {
         this.metadata = metadata;
     }
 
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
+    
     
     
     
