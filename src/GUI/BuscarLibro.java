@@ -3,6 +3,9 @@ package GUI;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -53,17 +56,22 @@ public class BuscarLibro extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
 
-        if(jtxBuscar.getText().length() != 0)
-        {
-                ListadoLibros mostrar = new ListadoLibros(2,jtxBuscar.getText());
+        if (jtxBuscar.getText().length() != 0) {
+            ListadoLibros mostrar;
+            try {
+                mostrar = new ListadoLibros(2, jtxBuscar.getText());
                 mostrar.setVisible(true);
                 this.dispose();
-                
-            
-        }else{
-        
+            } catch (HeadlessException ex) {
+                Logger.getLogger(BuscarLibro.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(BuscarLibro.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } else {
+
             JOptionPane.showMessageDialog(this, "Para mostrar el listado de libros, debe llenar el campo.");
-        
+
         }
 
     }

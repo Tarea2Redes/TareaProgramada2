@@ -1,5 +1,6 @@
 package GUI;
 
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -60,7 +61,6 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
         this.mostrarLibros = new JMenuItem("mostrar libros");
         this.mostrarLibros.addActionListener(this);
 
-      
         this.jmArchivo.add(this.insertarLibros);
         this.jmArchivo.add(this.buscarLibros);
         this.jmArchivo.add(this.mostrarLibros);
@@ -82,24 +82,29 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.insertarLibros) {
-            
-            
-            InsertarLibro insertarLibro= new InsertarLibro();
+
+            InsertarLibro insertarLibro = new InsertarLibro();
             insertarLibro.setVisible(true);
 
         }
         if (e.getSource() == this.buscarLibros) {
-            BuscarLibro buscar= new BuscarLibro();
+            BuscarLibro buscar = new BuscarLibro();
             buscar.setVisible(true);
 
         }
-        
-        
+
         if (e.getSource() == this.mostrarLibros) {
-            
-            ListadoLibros listado= new ListadoLibros(1,null);
-            listado.setVisible(true);
-            
+
+            ListadoLibros listado;
+            try {
+                listado = new ListadoLibros(1, null);
+                listado.setVisible(true);
+
+            } catch (HeadlessException ex) {
+                Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
         }
 
