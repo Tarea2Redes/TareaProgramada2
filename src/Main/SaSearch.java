@@ -12,6 +12,7 @@ public class SaSearch {
         
         VentanaPrincipal ventanaPrincipal= new VentanaPrincipal();
         ventanaPrincipal.setVisible(true);
+        System.out.println("running...");
         
     }
     
