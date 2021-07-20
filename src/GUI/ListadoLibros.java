@@ -1,26 +1,34 @@
 package GUI;
 
+import Domain.Comunicacion;
+import Domain.Libro;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class ListadoLibros extends JFrame  implements ActionListener{
+public class ListadoLibros extends JFrame implements ActionListener {
+
     private JComboBox combo;
     private JButton boton;
-     private JPanel panelFondo;
+    private JPanel panelFondo;
 
-    public ListadoLibros(int opcion, String parametro) throws HeadlessException {
-        
-        
-        init(opcion,parametro);
+    public ListadoLibros(int opcion, String parametro) throws HeadlessException, IOException {
+
+        init(opcion, parametro);
     }
-     
 
-    private void init(int opcion, String parametro) {
+    private void init(int opcion, String parametro) throws IOException {
 
         setLayout(null);
         setSize(400, 500);
@@ -28,72 +36,65 @@ public class ListadoLibros extends JFrame  implements ActionListener{
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        
-        combo=new JComboBox();
+
+        combo = new JComboBox();
         combo.setBounds(100, 60, 150, 40);
-        llenarCombo(opcion, parametro);
-        
-        boton= new JButton("Mostrar contenido");
+        llenarCombo(combo,opcion, parametro);
+
+        boton = new JButton("Mostrar contenido");
         boton.setBounds(125, 290, 150, 30);
         boton.addActionListener(this);
-        
-        panelFondo= new PanelFondoSecundario(2, 400, 500);
+
+        panelFondo = new PanelFondoSecundario(2, 400, 500);
         panelFondo.setBounds(0, 0, 400, 500);
-        
+
         add(combo);
         add(boton);
         add(panelFondo);
-        
 
     }
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        
-        
-        
-        if(ae.getSource()== this.boton){
+
+        if (ae.getSource() == this.boton) {
+            
+            String value=String.valueOf(this.combo.getSelectedItem());
             
             
-            
-            
+
             //llama al dato y se lo pasa a la ventana
-            
 //            MostrarLibro mostrar= new MostrarLibro("contenido");
 //            mostrar.setVisible(true);
 //            this.dispose();
-        
-        
-        
-        
         }
-        
-        
+
     }
-    
-    private void llenarCombo(int opcion, String parametro){
-    
-        
-            if(opcion==1){
+
+    private void llenarCombo(JComboBox combo,int opcion, String parametro) throws UnknownHostException, IOException {
+
+        if (opcion == 1) {
+
+           
+            Comunicacion comunicacion = new Comunicacion();
             
+            ArrayList<Libro> libros = comunicacion.getListaLibros();
             
-                //busca con el parametro las opciones de todos
-            
+            for (int i = 0; i < libros.size(); i++) {
+                
+                combo.addItem(libros.get(i).getMetadata().getTitulo());
             }
             
             
-            if(opcion==2){
-            
-            
-                //llena con el parametro las opciones especificas
-            
-            }
-    
-    
-    
-    
-    
-    
+
+            //busca con el parametro las opciones de todos
+        }
+
+        if (opcion == 2) {
+
+            //llena con el parametro las opciones especificas
+        }
+
     }
 
 }

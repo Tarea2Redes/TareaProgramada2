@@ -1,5 +1,6 @@
 package GUI;
 
+import Domain.Comunicacion;
 import Domain.Contenido;
 import Domain.Libro;
 import Domain.Metadata;
@@ -121,50 +122,15 @@ public class InsertarLibro extends JFrame implements ActionListener {
             Contenido contenido = new Contenido(Integer.parseInt(jtxISBN.getText()), jtxContenido.getText());
 
             Libro libro = new Libro(metadata, contenido);
-
-            DatagramSocket socketUDP;
+            Comunicacion comunicacion = new Comunicacion();
             try {
-                socketUDP = new DatagramSocket();
-
-                InetAddress host = InetAddress.getByName("localhost");
-
-                String peticion = "registrar";
-
-                byte[] mensaje = peticion.getBytes();
-                int porcion = mensaje.length;
-
-                DatagramPacket datagramPacket;
-                datagramPacket = new DatagramPacket(mensaje, porcion, host, 69);
-                socketUDP.send(datagramPacket);
-
-                byte[] buffer = new byte[1000];
-
-                DatagramPacket datagramPacketReceive = new DatagramPacket(buffer, buffer.length);
-
-                socketUDP.receive(datagramPacketReceive);
-
-                String peticionLlegada = new String(datagramPacketReceive.getData(), 0, datagramPacketReceive.getLength());
-
-                if (peticionLlegada.equalsIgnoreCase("si")) {
-
-                    byte[] data = SerializationUtils.serialize(libro);
-                    int tamano = data.length;
-
-                    DatagramPacket datagramPacketEnvio;
-                    datagramPacketEnvio = new DatagramPacket(data, tamano, host, 69);
-                    socketUDP.send(datagramPacketEnvio);
+                if (comunicacion.insert(libro)) {
+                    JOptionPane.showMessageDialog(this, "Registrado el libro.", "Respuesta", JOptionPane.INFORMATION_MESSAGE);
+                } else {
                     
-                    JOptionPane.showMessageDialog(this,"Registrado el libro.","Respuesta",JOptionPane.INFORMATION_MESSAGE);
-
-                }else{
-                
-                JOptionPane.showMessageDialog(this,"ISBN ya existe,registre otro.","Atención",JOptionPane.ERROR_MESSAGE);
-                
-                
+                    JOptionPane.showMessageDialog(this, "ISBN ya existe,registre otro.", "Atención", JOptionPane.ERROR_MESSAGE);
+                    
                 }
-
-            } catch (SocketException ex) {
-                Logger.getLogger(InsertarLibro.class.getName()).log(Level.SEVERE, null, ex);
             } catch (UnknownHostException ex) {
                 Logger.getLogger(InsertarLibro.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
