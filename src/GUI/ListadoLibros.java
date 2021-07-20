@@ -12,6 +12,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -39,7 +41,7 @@ public class ListadoLibros extends JFrame implements ActionListener {
 
         combo = new JComboBox();
         combo.setBounds(100, 60, 150, 40);
-        llenarCombo(combo,opcion, parametro);
+        llenarCombo(combo, opcion, parametro);
 
         boton = new JButton("Mostrar contenido");
         boton.setBounds(125, 290, 150, 30);
@@ -58,34 +60,39 @@ public class ListadoLibros extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
 
         if (ae.getSource() == this.boton) {
-            
-            String value=String.valueOf(this.combo.getSelectedItem());
-            
-            
 
-            //llama al dato y se lo pasa a la ventana
-//            MostrarLibro mostrar= new MostrarLibro("contenido");
-//            mostrar.setVisible(true);
-//            this.dispose();
+            String itemSeleccionado = String.valueOf(this.combo.getSelectedItem());
+
+            Comunicacion comunicacion = new Comunicacion();
+            
+            
+            try {
+                
+                String contenido= comunicacion.mostrarContenidoLibroSeleccionado(itemSeleccionado);
+                String[] parts = contenido.split("-");
+                MostrarLibro mostrar = new MostrarLibro(itemSeleccionado,parts[0],parts[1]);
+                mostrar.setVisible(true);
+
+            } catch (IOException ex) {
+                Logger.getLogger(ListadoLibros.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
 
     }
 
-    private void llenarCombo(JComboBox combo,int opcion, String parametro) throws UnknownHostException, IOException {
+    private void llenarCombo(JComboBox combo, int opcion, String parametro) throws UnknownHostException, IOException {
 
         if (opcion == 1) {
 
-           
             Comunicacion comunicacion = new Comunicacion();
-            
+
             ArrayList<Libro> libros = comunicacion.getListaLibros();
-            
+
             for (int i = 0; i < libros.size(); i++) {
-                
+
                 combo.addItem(libros.get(i).getMetadata().getTitulo());
             }
-            
-            
 
             //busca con el parametro las opciones de todos
         }

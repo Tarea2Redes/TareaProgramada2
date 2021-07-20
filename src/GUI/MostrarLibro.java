@@ -19,15 +19,15 @@ public class MostrarLibro extends JFrame {
     private JTextArea jtxContenido;
     private JPanel panelFondo;
 
-    public MostrarLibro(String contenido) {
+    public MostrarLibro(String titulo,String isbn,String contenido) {
 
-        init(contenido);
+        init(titulo,isbn,contenido);
     }
 
-    private void init(String contenido) {
+    private void init(String titulo,String isbn,String contenido) {
 
         this.setLayout(null);
-        this.setTitle("Contenido libro seleccionado");
+        this.setTitle("Titulo: "+titulo+" isbn:"+ isbn);
         this.setSize(400, 500);
         this.setResizable(false);
         this.setLocationRelativeTo(null);

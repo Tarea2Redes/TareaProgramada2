@@ -11,6 +11,12 @@ import org.apache.commons.lang3.SerializationUtils;
 
 public class Comunicacion {
 
+    public Comunicacion() {
+    }
+
+    
+    
+    
     public boolean insert(Libro libro) throws SocketException, UnknownHostException, IOException {
 
         DatagramSocket socketUDP;
@@ -83,6 +89,25 @@ public class Comunicacion {
         return libros;
 
     }
-    
-    
+
+    public String mostrarContenidoLibroSeleccionado(String titulo) throws UnknownHostException, IOException {
+
+        ArrayList<Libro> libros = getListaLibros();
+
+        String contenido = "";
+
+        for (int i = 0; i < libros.size(); i++) {
+
+            if (libros.get(i).getMetadata().getTitulo().equals(titulo)) {
+                
+                contenido=libros.get(i).getMetadata().getIsbn()+"-"+ libros.get(i).getContenido().getContenido();
+                break;
+
+            }
+
+        }
+
+        return contenido;
+    }
+
 }
