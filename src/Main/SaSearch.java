@@ -1,11 +1,11 @@
 
-package tareaprogramada2_cliente;
+package Main;
 
 import GUI.VentanaPrincipal;
 import java.io.IOException;
 
 
-public class TareaProgramada2_Cliente {
+public class SaSearch {
 
  
     public static void main(String[] args) throws IOException {
