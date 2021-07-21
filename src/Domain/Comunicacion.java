@@ -11,15 +11,14 @@ import org.apache.commons.lang3.SerializationUtils;
 
 public class Comunicacion {
 
-    private final DatagramSocket socketUDP;
+    private DatagramSocket socketUDP;
     private static Comunicacion comunicacion;
+    private final InetAddress host = InetAddress.getByName("localhost");
+    private int port = 69;
 
     private Comunicacion() throws SocketException, UnknownHostException {
 
-        int puerto = 69;
-        InetAddress host = InetAddress.getByName("localhost");
-
-        socketUDP = new DatagramSocket(puerto, host);
+        socketUDP = new DatagramSocket();
     }
 
     public static Comunicacion getInstance() throws SocketException, UnknownHostException {
@@ -33,12 +32,12 @@ public class Comunicacion {
 
         String peticion = "registrar";
 
-        DatagramPacket datagramPacket = new DatagramPacket(peticion.getBytes(), peticion.getBytes().length);
+        DatagramPacket datagramPacket = new DatagramPacket(peticion.getBytes(), peticion.getBytes().length, host, port);
         socketUDP.send(datagramPacket);
 
         byte[] buffer = new byte[100];
 
-        DatagramPacket datagramPacketReceive = new DatagramPacket(buffer, buffer.length);
+        DatagramPacket datagramPacketReceive = new DatagramPacket(buffer, buffer.length, host, port);
         socketUDP.receive(datagramPacketReceive);
 
         String peticionLlegada = new String(datagramPacketReceive.getData(), 0, datagramPacketReceive.getLength());
@@ -49,7 +48,7 @@ public class Comunicacion {
 
             byte[] data = SerializationUtils.serialize(libro);
 
-            DatagramPacket datagramPacketEnvio = new DatagramPacket(data, data.length);
+            DatagramPacket datagramPacketEnvio = new DatagramPacket(data, data.length, host, port);
             socketUDP.send(datagramPacketEnvio);
 
             System.out.println("libro enviado");
@@ -64,26 +63,20 @@ public class Comunicacion {
 
         ArrayList<Libro> libros = new ArrayList<>();
 
-        DatagramSocket socketUDP;
-
-        socketUDP = new DatagramSocket();
-
-        InetAddress host = InetAddress.getByName("localhost");
-
         String msj = "lista";
         byte[] mensaje = msj.getBytes();
         int porcion = mensaje.length;
-        DatagramPacket datagramPacket = new DatagramPacket(mensaje, porcion, host, 69);
+        DatagramPacket datagramPacket = new DatagramPacket(mensaje, porcion, host, port);
         socketUDP.send(datagramPacket);
 
         byte[] buffer = new byte[1000];
-        DatagramPacket datagramPacketReceive = new DatagramPacket(buffer, buffer.length);
+        DatagramPacket datagramPacketReceive = new DatagramPacket(buffer, buffer.length, host, port);
         socketUDP.receive(datagramPacketReceive);
         String peticionLlegada = new String(datagramPacketReceive.getData(), 0, datagramPacketReceive.getLength());
 
         while (!peticionLlegada.equalsIgnoreCase("end")) {
 
-            DatagramPacket temp = new DatagramPacket(buffer, buffer.length);
+            DatagramPacket temp = new DatagramPacket(buffer, buffer.length, host, port);
             socketUDP.receive(temp);
 
             Libro libro = SerializationUtils.deserialize(temp.getData());
