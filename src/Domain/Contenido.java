@@ -29,6 +29,11 @@ public class Contenido implements Serializable{
     public void setContenido(String contenido) {
         this.contenido = contenido;
     }
+
+    @Override
+    public String toString() {
+        return "contenido=" + contenido;
+    }
     
     
     

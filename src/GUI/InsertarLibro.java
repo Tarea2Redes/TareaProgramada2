@@ -122,14 +122,16 @@ public class InsertarLibro extends JFrame implements ActionListener {
             Contenido contenido = new Contenido(Integer.parseInt(jtxISBN.getText()), jtxContenido.getText());
 
             Libro libro = new Libro(metadata, contenido);
-            Comunicacion comunicacion = new Comunicacion();
             try {
+
+                Comunicacion comunicacion = Comunicacion.getInstance();
+                
                 if (comunicacion.insert(libro)) {
                     JOptionPane.showMessageDialog(this, "Registrado el libro.", "Respuesta", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    
+
                     JOptionPane.showMessageDialog(this, "ISBN ya existe,registre otro.", "Atención", JOptionPane.ERROR_MESSAGE);
-                    
+
                 }
             } catch (UnknownHostException ex) {
                 Logger.getLogger(InsertarLibro.class.getName()).log(Level.SEVERE, null, ex);

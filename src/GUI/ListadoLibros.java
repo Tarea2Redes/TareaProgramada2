@@ -62,10 +62,9 @@ public class ListadoLibros extends JFrame implements ActionListener {
         if (ae.getSource() == this.boton) {
 
             String itemSeleccionado = String.valueOf(this.combo.getSelectedItem());
-
-            Comunicacion comunicacion = new Comunicacion();
-
             try {
+
+                Comunicacion comunicacion = Comunicacion.getInstance();
 
                 String contenido = comunicacion.mostrarContenidoLibroSeleccionado(itemSeleccionado);
                 String[] parts = contenido.split("-");
@@ -84,7 +83,7 @@ public class ListadoLibros extends JFrame implements ActionListener {
 
         if (opcion == 1) {
 
-            Comunicacion comunicacion = new Comunicacion();
+            Comunicacion comunicacion = Comunicacion.getInstance();
 
             ArrayList<Libro> libros = comunicacion.getListaLibros();
 
@@ -93,12 +92,12 @@ public class ListadoLibros extends JFrame implements ActionListener {
                 combo.addItem(libros.get(i).getMetadata().getTitulo());
             }
 
-            
         }
 
         if (opcion == 2) {
+            
+            Comunicacion comunicacion = Comunicacion.getInstance();
 
-            Comunicacion comunicacion = new Comunicacion();
             ArrayList<Libro> libros = comunicacion.mostrarLibroMetadata(parametro);
 
             for (int i = 0; i < libros.size(); i++) {

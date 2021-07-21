@@ -11,45 +11,52 @@ import org.apache.commons.lang3.SerializationUtils;
 
 public class Comunicacion {
 
-    public Comunicacion() {
+    private final DatagramSocket socketUDP;
+    private static Comunicacion comunicacion;
+
+    private Comunicacion() throws SocketException, UnknownHostException {
+
+        int puerto = 69;
+        InetAddress host = InetAddress.getByName("localhost");
+
+        socketUDP = new DatagramSocket(puerto, host);
+    }
+
+    public static Comunicacion getInstance() throws SocketException, UnknownHostException {
+        if (comunicacion == null) {
+            comunicacion = new Comunicacion();
+        }
+        return comunicacion;
     }
 
     public boolean insert(Libro libro) throws SocketException, UnknownHostException, IOException {
 
-        DatagramSocket socketUDP;
-
-        socketUDP = new DatagramSocket();
-
-        InetAddress host = InetAddress.getByName("localhost");
-
         String peticion = "registrar";
 
-        byte[] mensaje = peticion.getBytes();
-        int porcion = mensaje.length;
-
-        DatagramPacket datagramPacket;
-        datagramPacket = new DatagramPacket(mensaje, porcion, host, 69);
+        DatagramPacket datagramPacket = new DatagramPacket(peticion.getBytes(), peticion.getBytes().length);
         socketUDP.send(datagramPacket);
 
-        byte[] buffer = new byte[1000];
+        byte[] buffer = new byte[100];
 
         DatagramPacket datagramPacketReceive = new DatagramPacket(buffer, buffer.length);
-
         socketUDP.receive(datagramPacketReceive);
 
         String peticionLlegada = new String(datagramPacketReceive.getData(), 0, datagramPacketReceive.getLength());
 
         if (peticionLlegada.equalsIgnoreCase("si")) {
 
-            byte[] data = SerializationUtils.serialize(libro);
-            int tamano = data.length;
+            System.out.println("server dijo: si");
 
-            DatagramPacket datagramPacketEnvio;
-            datagramPacketEnvio = new DatagramPacket(data, tamano, host, 69);
+            byte[] data = SerializationUtils.serialize(libro);
+
+            DatagramPacket datagramPacketEnvio = new DatagramPacket(data, data.length);
             socketUDP.send(datagramPacketEnvio);
+
+            System.out.println("libro enviado");
             return true;
 
         }
+
         return false;
     }
 
@@ -110,8 +117,8 @@ public class Comunicacion {
     public ArrayList<Libro> mostrarLibroMetadata(String palabraBuscar) throws UnknownHostException, IOException {
 
         ArrayList<Libro> libros = getListaLibros();
-        ArrayList<Libro> aux= new ArrayList<>();
-        
+        ArrayList<Libro> aux = new ArrayList<>();
+
         for (int i = 0; i < libros.size(); i++) {
 
             if (libros.get(i).getMetadata().getAutor().contains(palabraBuscar)
@@ -120,10 +127,7 @@ public class Comunicacion {
                     || libros.get(i).getMetadata().getTitulo().contains(palabraBuscar)
                     || String.valueOf(libros.get(i).getMetadata().getIsbn()).contains(palabraBuscar)
                     || libros.get(i).getMetadata().getPaginas().contains(palabraBuscar)) {
-                
-                
-                
-                
+
                 aux.add(libros.get(i));
 
             }

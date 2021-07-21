@@ -38,6 +38,13 @@ public class Libro implements Serializable{
         this.metadata = metadata;
     }
 
+    @Override
+    public String toString() {
+        return "Libro{" + "metadata=" + metadata.toString() + ", contenido=" + contenido.toString() + '}';
+    }
+
+    
+    
     
     
     
