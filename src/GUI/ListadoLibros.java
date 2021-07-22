@@ -6,9 +6,6 @@ import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -39,9 +36,15 @@ public class ListadoLibros extends JFrame implements ActionListener {
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        combo = new JComboBox();
-        combo.setBounds(100, 60, 150, 40);
-        llenarCombo(combo, opcion, parametro);
+        try {
+            llenarCombo(opcion, parametro);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(ListadoLibros.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SocketException ex) {
+            Logger.getLogger(ListadoLibros.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ListadoLibros.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         boton = new JButton("Mostrar contenido");
         boton.setBounds(125, 290, 150, 30);
@@ -73,39 +76,48 @@ public class ListadoLibros extends JFrame implements ActionListener {
 
             } catch (IOException ex) {
                 Logger.getLogger(ListadoLibros.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(ListadoLibros.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
 
     }
 
-    private void llenarCombo(JComboBox combo, int opcion, String parametro) throws UnknownHostException, IOException {
+    private void llenarCombo(int opcion, String parametro) throws UnknownHostException, IOException, SocketException, ClassNotFoundException {
+
+        String[] listaCombo = null;
+        ArrayList<Libro> listaLibros;
 
         if (opcion == 1) {
 
             Comunicacion comunicacion = Comunicacion.getInstance();
+            listaLibros = comunicacion.getListaLibros();
+            listaCombo = new String[listaLibros.size()];
 
-            ArrayList<Libro> libros = comunicacion.getListaLibros();
+            for (int i = 0; i < listaCombo.length; i++) {
 
-            for (int i = 0; i < libros.size(); i++) {
-
-                combo.addItem(libros.get(i).getMetadata().getTitulo());
+                listaCombo[i] = (listaLibros.get(i).getMetadata().getTitulo());
             }
 
         }
 
         if (opcion == 2) {
-            
+
             Comunicacion comunicacion = Comunicacion.getInstance();
+            listaLibros = comunicacion.mostrarLibroMetadata(parametro);
+            listaCombo = new String[listaLibros.size()];
 
-            ArrayList<Libro> libros = comunicacion.mostrarLibroMetadata(parametro);
+            for (int i = 0; i < listaCombo.length; i++) {
 
-            for (int i = 0; i < libros.size(); i++) {
+                listaCombo[i] = (listaLibros.get(i).getMetadata().getTitulo());
 
-                combo.addItem(libros.get(i).getMetadata().getTitulo());
             }
 
         }
+
+        combo = new JComboBox(listaCombo);
+        combo.setBounds(100, 60, 150, 40);
 
     }
 

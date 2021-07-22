@@ -97,7 +97,7 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 
             ListadoLibros listado;
             try {
-                listado = new ListadoLibros(1, null);
+                listado = new ListadoLibros(1, "");
                 listado.setVisible(true);
 
             } catch (HeadlessException ex) {

@@ -1,13 +1,12 @@
-
 package Domain;
 
 import java.io.Serializable;
 
+public class Contenido implements Serializable {
 
-public class Contenido implements Serializable{
-    
     private int isbn;
     private String contenido;
+    static final long serialVersionUID = 2L;
 
     public Contenido(int isbn, String contenido) {
         this.isbn = isbn;
@@ -34,7 +33,5 @@ public class Contenido implements Serializable{
     public String toString() {
         return "contenido=" + contenido;
     }
-    
-    
-    
+
 }

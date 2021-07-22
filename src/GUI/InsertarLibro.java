@@ -4,6 +4,7 @@ import Domain.Comunicacion;
 import Domain.Contenido;
 import Domain.Libro;
 import Domain.Metadata;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -72,14 +73,15 @@ public class InsertarLibro extends JFrame implements ActionListener {
         this.jtxtGenero.setBounds(200, 130, 140, 25);
 
         this.lblISBN = new JLabel("ISBN: ");
+        lblISBN.setForeground(Color.red);
         this.lblISBN.setBounds(30, 180, 100, 25);
         this.jtxISBN = new JTextField();
         this.jtxISBN.setBounds(20, 210, 140, 25);
 
         this.lblPagina = new JLabel("Cantidad de pàginas: ");
-        this.lblPagina.setBounds(200, 180, 120, 25);
+        this.lblPagina.setBounds(200, 180, 180, 25);
         this.jtxPagina = new JTextField();
-        this.jtxPagina.setBounds(200, 210, 140, 25);
+        this.jtxPagina.setBounds(200, 210, 90, 25);
 
         this.lblContenido = new JLabel("Contenido del libro: ");
         this.lblContenido.setBounds(200, 280, 120, 25);
@@ -125,7 +127,7 @@ public class InsertarLibro extends JFrame implements ActionListener {
             try {
 
                 Comunicacion comunicacion = Comunicacion.getInstance();
-                
+
                 if (comunicacion.insert(libro)) {
                     JOptionPane.showMessageDialog(this, "Registrado el libro.", "Respuesta", JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -138,6 +140,9 @@ public class InsertarLibro extends JFrame implements ActionListener {
             } catch (IOException ex) {
                 Logger.getLogger(InsertarLibro.class.getName()).log(Level.SEVERE, null, ex);
             }
+
+        } else {
+                    JOptionPane.showMessageDialog(this, "Faltan campos por comletar", "", JOptionPane.ERROR_MESSAGE);
 
         }
 

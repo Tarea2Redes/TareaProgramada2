@@ -1,13 +1,16 @@
 package Domain;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import org.apache.commons.lang3.SerializationUtils;
 
 public class Comunicacion {
 
@@ -46,7 +49,11 @@ public class Comunicacion {
 
             System.out.println("server dijo: si");
 
-            byte[] data = SerializationUtils.serialize(libro);
+//            byte[] data = SerializationUtils.serialize(libro);
+            byte[] data = serialize(libro);
+            
+            Huffman h = new Huffman(data.toString());
+            h.comprimir();
 
             DatagramPacket datagramPacketEnvio = new DatagramPacket(data, data.length, host, port);
             socketUDP.send(datagramPacketEnvio);
@@ -59,7 +66,7 @@ public class Comunicacion {
         return false;
     }
 
-    public ArrayList<Libro> getListaLibros() throws SocketException, UnknownHostException, IOException {
+    public ArrayList<Libro> getListaLibros() throws SocketException, UnknownHostException, IOException, ClassNotFoundException {
 
         ArrayList<Libro> libros = new ArrayList<>();
 
@@ -69,19 +76,21 @@ public class Comunicacion {
         DatagramPacket datagramPacket = new DatagramPacket(mensaje, porcion, host, port);
         socketUDP.send(datagramPacket);
 
-        byte[] buffer = new byte[30000];
-
         while (true) {
+
+            byte[] buffer = new byte[30000];
 
             DatagramPacket temp = new DatagramPacket(buffer, buffer.length, host, port);
             socketUDP.receive(temp);
             String peticionLlegada = new String(temp.getData(), 0, temp.getLength());
 
-            if (!peticionLlegada.equalsIgnoreCase("end")) {
+            if (peticionLlegada.equals("end")) {
                 break;
             } else {
-                Libro libro = SerializationUtils.deserialize(temp.getData());
+//                Libro libro = SerializationUtils.deserialize(temp.getData());
+                Libro libro = deserialize(temp.getData());
                 libros.add(libro);
+
             }
 
         }
@@ -89,7 +98,7 @@ public class Comunicacion {
 
     }
 
-    public String mostrarContenidoLibroSeleccionado(String titulo) throws UnknownHostException, IOException {
+    public String mostrarContenidoLibroSeleccionado(String titulo) throws UnknownHostException, IOException, SocketException, ClassNotFoundException {
 
         ArrayList<Libro> libros = getListaLibros();
 
@@ -109,7 +118,7 @@ public class Comunicacion {
         return contenido;
     }
 
-    public ArrayList<Libro> mostrarLibroMetadata(String palabraBuscar) throws UnknownHostException, IOException {
+    public ArrayList<Libro> mostrarLibroMetadata(String palabraBuscar) throws UnknownHostException, IOException, SocketException, ClassNotFoundException {
 
         ArrayList<Libro> libros = getListaLibros();
         ArrayList<Libro> aux = new ArrayList<>();
@@ -130,4 +139,27 @@ public class Comunicacion {
 
         return aux;
     }
+
+    private byte[] serialize(Libro object) {
+        if (object == null) {
+            return null;
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(3000);
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(object);
+            oos.flush();
+        } catch (IOException ex) {
+            throw new IllegalArgumentException("Failed to serialize object of type: " + object.getClass(), ex);
+        }
+        return baos.toByteArray();
+    }
+
+    private Libro deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+                ObjectInputStream in = new ObjectInputStream(bis)) {
+            return (Libro) in.readObject();
+        }
+    }
+
 }
