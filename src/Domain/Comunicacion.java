@@ -69,18 +69,20 @@ public class Comunicacion {
         DatagramPacket datagramPacket = new DatagramPacket(mensaje, porcion, host, port);
         socketUDP.send(datagramPacket);
 
-        byte[] buffer = new byte[1000];
-        DatagramPacket datagramPacketReceive = new DatagramPacket(buffer, buffer.length, host, port);
-        socketUDP.receive(datagramPacketReceive);
-        String peticionLlegada = new String(datagramPacketReceive.getData(), 0, datagramPacketReceive.getLength());
+        byte[] buffer = new byte[30000];
 
-        while (!peticionLlegada.equalsIgnoreCase("end")) {
+        while (true) {
 
             DatagramPacket temp = new DatagramPacket(buffer, buffer.length, host, port);
             socketUDP.receive(temp);
+            String peticionLlegada = new String(temp.getData(), 0, temp.getLength());
 
-            Libro libro = SerializationUtils.deserialize(temp.getData());
-            libros.add(libro);
+            if (!peticionLlegada.equalsIgnoreCase("end")) {
+                break;
+            } else {
+                Libro libro = SerializationUtils.deserialize(temp.getData());
+                libros.add(libro);
+            }
 
         }
         return libros;
